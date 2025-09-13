@@ -1,0 +1,255 @@
+<!-- templates/detect_results.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ 检测结果</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #FFD700; /* 金色，蜜蜂相关 */
+            --primary-dark: #e6c200;
+            --secondary-color: #8B4513; /* 棕色 */
+            --accent-color: #FFA500; /* 橙色 */
+            --text-dark: #333;
+            --text-light: #666;
+            --text-muted: #868e96;
+            --bg-light: #f8f9fa;
+            --bg-card: #ffffff;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            color: var(--secondary-color);
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+        }
+
+        h1 i {
+            color: var(--accent-color);
+        }
+
+        /* 操作链接 */
+        .action-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .action-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .action-link:hover {
+            background: linear-gradient(135deg, var(--primary-dark), #e69500);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* 结果网格 */
+        .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        /* 单个结果卡片 */
+        .result-item {
+            background-color: var(--bg-card);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .result-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .result-item h3 {
+            background: linear-gradient(135deg, #e9ecef, #dee2e6);
+            padding: 15px;
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .result-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .labels {
+            padding: 15px;
+        }
+
+        .labels strong {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+        }
+
+        .labels ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .label-item {
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            background-color: var(--bg-light);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .label-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .label-class {
+            font-weight: 500;
+        }
+
+        .label-confidence {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+         /* 无检测结果 */
+        .no-detection {
+            padding: 30px 15px;
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+            background-color: #f8f9fa;
+        }
+
+        .no-detection i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+            color: #ced4da;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .results {
+                grid-template-columns: 1fr;
+            }
+            .action-links {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-clipboard-check"></i> 检测结果</h1>
+        
+        <div class="action-links">
+            <a href="{{ url_for('detect') }}" class="action-link"><i class="fas fa-redo"></i> 重新检测</a>
+            <a href="{{ url_for('index') }}" class="action-link"><i class="fas fa-home"></i> 返回首页</a>
+        </div>
+
+        <div class="results">
+            {% for item in results %}
+            <div class="result-item">
+                <!-- 确保原始文件名正确显示 -->
+                <h3 title="{{ item.original.split('/')[-1] }}">{{ item.original.split('/')[-1] }}</h3>
+                
+                {% if item.detected %}
+                    <!-- 确保检测图像路径正确 -->
+                    <img src="{{ url_for('detection_files', filename=item.detected.split('/', 1)[1]) }}" alt="Detected Image">
+                    <div class="labels">
+                        <strong><i class="fas fa-tags"></i> 检测到:</strong>
+                        {% if item.labels %}
+                            <ul>
+                            {% for label in item.labels %}
+                                <li class="label-item">
+                                    <!-- 保持原始数据结构不变 -->
+                                    <span class="label-class">类别 {{ label.class_id }}</span>
+                                    <span class="label-confidence">置信度: {{ label.confidence }}</span>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>图像已处理，但标签文件为空或无法解析。</p>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="no-detection">
+                        <i class="fas fa-ban"></i>
+                        未生成检测图像。可能未检测到目标或处理出错。
+                    </div>
+                    {% if item.original %}
+                    <!-- 确保原始图像路径正确 -->
+                    <img src="{{ url_for('uploaded_files', filename=item.original.split('/')[-1]) }}" alt="Original Image" style="opacity: 0.5;">
+                    {% endif %}
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
+
+
+

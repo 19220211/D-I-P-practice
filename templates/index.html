@@ -1,0 +1,667 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐝 蜜蜂检测系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #FFD700; /* 金色，蜜蜂相关 */
+            --primary-dark: #e6c200;
+            --secondary-color: #8B4513; /* 棕色 */
+            --accent-color: #FFA500; /* 橙色 */
+            --text-dark: #333;
+            --text-light: #666;
+            --bg-light: #f8f9fa;
+            --bg-card: #ffffff;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            color: var(--secondary-color);
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        h1 i {
+            color: var(--accent-color);
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary-color));
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .nav-link.video {
+            background: linear-gradient(135deg, #28a745, #218838);
+        }
+
+        .nav-link.video:hover {
+            background: linear-gradient(135deg, #218838, #1e7e34);
+        }
+
+        .section {
+            background-color: var(--bg-card);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        h2 {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        h2 i {
+            margin-right: 10px;
+        }
+
+        h3 {
+            color: var(--text-dark);
+            margin: 20px 0 15px 0;
+            font-size: 1.3rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0 25px 0;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f1f1f1; /* 浅灰色表头 */
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        tr:nth-child(even) {
+            background-color: #fafafa; /* 斑马纹 */
+        }
+
+        tr:hover {
+            background-color: #f5f5f5; /* 悬停效果 */
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        li {
+            padding: 5px 0;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        li:before {
+            content: "•";
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+        }
+
+        .no-data {
+            color: var(--text-light);
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 350px;
+            margin: 15px 0 30px 0;
+            background-color: #fafafa;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            .nav-link {
+                width: 100%;
+                justify-content: center;
+            }
+            th, td {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    <!-- 引入 Chart.js 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-bee"></i> 蜜蜂图像检测系统</h1>
+            <div class="nav-links">
+                <a href="{{ url_for('gallery') }}" class="nav-link"><i class="fas fa-images"></i> 浏览图像</a>
+                <a href="{{ url_for('detect') }}" class="nav-link"><i class="fas fa-search"></i> 上传图像检测</a>
+                <a href="{{ url_for('detect_video') }}" class="nav-link video"><i class="fas fa-video"></i> 上传视频检测</a>
+            </div>
+        </header>
+
+        {% if stats %}
+            {% if stats.overall %}
+            <section class="section">
+                <h2><i class="fas fa-chart-line"></i> 数据集总体统计</h2>
+                <table>
+                    <tr>
+                        <th>指标</th>
+                        <th>数值</th>
+                    </tr>
+                    <tr>
+                        <td>图像总数</td>
+                        <td>{{ "{:,}".format(stats.overall.total_images) }}</td>
+                    </tr>
+                    <tr>
+                        <td>标注框总数</td>
+                        <td>{{ "{:,}".format(stats.overall.total_annotations) }}</td>
+                    </tr>
+                    <tr>
+                        <td>平均每张图像标注框数</td>
+                        <td>{{ "%.2f"|format(stats.overall.avg_annotations_per_image) }}</td>
+                    </tr>
+                    <tr>
+                        <td>平均每张图像蜜蜂数量</td>
+                        <td>{{ "%.2f"|format(stats.overall.avg_bees_per_image) }}</td>
+                    </tr>
+                    <tr>
+                        <td>每张图像蜜蜂数量标准差</td>
+                        <td>{{ "%.2f"|format(stats.overall.std_bees_per_image) }}</td>
+                    </tr>
+                    <tr>
+                        <td>单个图像中的最大蜜蜂数量</td>
+                        <td>{{ stats.overall.max_bees_per_image }}</td>
+                    </tr>
+                    <tr>
+                        <td>单个图像中的最小蜜蜂数量</td>
+                        <td>{{ stats.overall.min_bees_per_image }}</td>
+                    </tr>
+                    <tr>
+                        <td>没有蜜蜂的图像数量</td>
+                        <td>{{ "{:,}".format(stats.overall.images_with_no_bees) }}</td>
+                    </tr>
+                </table>
+            </section>
+            {% endif %}
+
+            {% for split_key, split_stats in stats.items() %}
+                {% if split_key != 'overall' %}
+                <section class="section" id="section-{{ split_key }}">
+                    <h2><i class="fas fa-database"></i> {{ split_stats.name|title }} 集统计</h2>
+                    <table>
+                        <tr>
+                            <th>指标</th>
+                            <th>数值</th>
+                        </tr>
+                        <tr>
+                            <td>图像数量</td>
+                            <td>{{ "{:,}".format(split_stats.image_count) }}</td>
+                        </tr>
+                        <tr>
+                            <td>标注框总数</td>
+                            <td>{{ "{:,}".format(split_stats.annotation_count) }}</td>
+                        </tr>
+                        <tr>
+                            <td>平均每张图像标注框数</td>
+                            <td>{{ "%.2f"|format(split_stats.avg_annotations_per_image) }}</td>
+                        </tr>
+                        <tr>
+                            <td>平均每张图像蜜蜂数量</td>
+                            <td>{{ "%.2f"|format(split_stats.avg_bees_per_image) }}</td>
+                        </tr>
+                        <tr>
+                            <td>每张图像蜜蜂数量标准差</td>
+                            <td>{{ "%.2f"|format(split_stats.std_bees_per_image) }}</td>
+                        </tr>
+                        <tr>
+                            <td>单个图像中的最大蜜蜂数量</td>
+                            <td>{{ split_stats.max_bees_per_image }}</td>
+                        </tr>
+                        <tr>
+                            <td>单个图像中的最小蜜蜂数量</td>
+                            <td>{{ split_stats.min_bees_per_image }}</td>
+                        </tr>
+                        <tr>
+                            <td>没有蜜蜂的图像数量</td>
+                            <td>{{ "{:,}".format(split_stats.images_with_no_bees) }}</td>
+                        </tr>
+                        <tr>
+                            <td>类别频率/比例</td>
+                            <td>
+                                {% if split_stats.category_counts %}
+                                    <ul>
+                                    {% for cat_name, count in split_stats.category_counts.items() %}
+                                        <li>{{ cat_name }}: {{ count }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <span class="no-data">无类别数据</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+
+                    <h3><i class="fas fa-ruler-horizontal"></i> 目标尺寸分布 (宽)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-width-{{ split_key }}"></canvas>
+                    </div>
+
+                    <h3><i class="fas fa-ruler-vertical"></i> 目标尺寸分布 (高)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-height-{{ split_key }}"></canvas>
+                    </div>
+
+                    <h3><i class="fas fa-vector-square"></i> 目标尺寸分布 (面积)</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-area-{{ split_key }}"></canvas>
+                    </div>
+
+                    <h3><i class="fas fa-map-marker-alt"></i> 空间位置分布</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-position-{{ split_key }}"></canvas>
+                    </div>
+
+                    <h3><i class="fas fa-expand-arrows-alt"></i> 宽高比分布</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-aspect-{{ split_key }}"></canvas>
+                    </div>
+                </section>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <div class="section">
+                <p class="no-data">无法加载数据集统计信息。</p>
+            </div>
+        {% endif %}
+
+        <footer>
+            <p>蜜蜂检测系统 &copy; 2025</p>
+        </footer>
+    </div> <!-- /container -->
+
+    <!-- JavaScript for Chart.js -->
+    <script>
+        // 辅助函数：计算直方图数据
+        function calculateHistogram(data, numBins = 20) {
+            if (!data || data.length === 0) {
+                return { bins: [], counts: [] };
+            }
+
+            const min = Math.min(...data);
+            const max = Math.max(...data);
+            // 处理所有值相等的情况
+            const range = (max > min) ? (max - min) : 1;
+            const binWidth = range / numBins;
+
+            // 初始化 bins 和 counts
+            const bins = Array.from({length: numBins}, (_, i) => min + (i + 0.5) * binWidth);
+            const counts = new Array(numBins).fill(0);
+
+            // 分配数据到 bins
+            data.forEach(value => {
+                // 确保 value 在 [min, max] 范围内
+                if (value >= min && value <= max) {
+                    const binIndex = Math.min(Math.floor((value - min) / binWidth), numBins - 1);
+                    counts[binIndex]++;
+                }
+            });
+
+            return { bins, counts };
+        }
+
+        // 辅助函数：为图表标签格式化数字
+        function formatLabel(value, index, values) {
+             // 尝试保留两位小数，但如果整数则不显示小数点
+             if (Number.isInteger(value)) {
+                 return value.toString();
+             } else {
+                  // 对于浮点数，保留两位小数
+                  return value.toFixed(2);
+             }
+        }
+
+        // 辅助函数：获取颜色
+        function getColor(index, total) {
+            // 使用 Chart.js 的默认颜色循环 或 自定义颜色
+            const colors = [
+                 'rgba(255, 215, 0, 0.7)', // 金色
+                 'rgba(139, 69, 19, 0.7)', // 棕色
+                 'rgba(255, 165, 0, 0.7)', // 橙色
+                 'rgba(75, 192, 192, 0.7)', // 青色
+                 'rgba(153, 102, 255, 0.7)', // 紫色
+                 'rgba(255, 99, 132, 0.7)'  // 红色
+            ];
+            return colors[index % colors.length];
+        }
+
+
+        // --- 从 Flask 模板获取数据并绘制图表 ---
+        {% for split_key, split_stats in stats.items() %}
+        {% if split_key != 'overall' %}
+        // 为每个数据集子集 (train, valid, test) 绘制图表
+        (function() { // 使用 IIFE 避免变量污染全局作用域
+            const splitKey = "{{ split_key }}"; // 从模板获取当前子集名称
+
+            // 1. 目标尺寸分布 (宽)
+            const widthData = {{ split_stats.bbox_widths | tojson }};
+            if (widthData && widthData.length > 0) {
+                const widthHist = calculateHistogram(widthData, 20);
+                const ctxWidth = document.getElementById('chart-width-' + splitKey).getContext('2d');
+                new Chart(ctxWidth, {
+                    type: 'bar',
+                    data: {
+                        labels: widthHist.bins.map(b => b.toFixed(1)), // 格式化标签
+                        datasets: [{
+                            label: '数量',
+                            data: widthHist.counts,
+                            backgroundColor: getColor(0, 6),
+                            borderColor: getColor(0, 6).replace('0.7', '1'),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: '{{ split_stats.name|title }} 集 - 目标宽度分布',
+                                font: { size: 14 }
+                            },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                title: { display: true, text: '宽度 (像素)' },
+                                ticks: { callback: formatLabel }
+                            },
+                            y: {
+                                title: { display: true, text: '数量' },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 2. 目标尺寸分布 (高)
+            const heightData = {{ split_stats.bbox_heights | tojson }};
+            if (heightData && heightData.length > 0) {
+                const heightHist = calculateHistogram(heightData, 20);
+                const ctxHeight = document.getElementById('chart-height-' + splitKey).getContext('2d');
+                new Chart(ctxHeight, {
+                    type: 'bar',
+                    data: {
+                        labels: heightHist.bins.map(b => b.toFixed(1)),
+                        datasets: [{
+                            label: '数量',
+                            data: heightHist.counts,
+                            backgroundColor: getColor(1, 6),
+                            borderColor: getColor(1, 6).replace('0.7', '1'),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: '{{ split_stats.name|title }} 集 - 目标高度分布',
+                                font: { size: 14 }
+                            },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                title: { display: true, text: '高度 (像素)' },
+                                ticks: { callback: formatLabel }
+                            },
+                            y: {
+                                title: { display: true, text: '数量' },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 3. 目标尺寸分布 (面积)
+            const areaData = {{ split_stats.bbox_areas | tojson }};
+            if (areaData && areaData.length > 0) {
+                const areaHist = calculateHistogram(areaData, 20);
+                const ctxArea = document.getElementById('chart-area-' + splitKey).getContext('2d');
+                new Chart(ctxArea, {
+                    type: 'bar',
+                    data: {
+                        labels: areaHist.bins.map(b => b.toFixed(0)), // 面积通常为整数
+                        datasets: [{
+                            label: '数量',
+                            data: areaHist.counts,
+                            backgroundColor: getColor(2, 6),
+                            borderColor: getColor(2, 6).replace('0.7', '1'),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                             title: {
+                                 display: true,
+                                 text: '{{ split_stats.name|title }} 集 - 目标面积分布',
+                                 font: { size: 14 }
+                             },
+                             legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                title: { display: true, text: '面积 (像素²)' },
+                                ticks: { callback: formatLabel }
+                            },
+                            y: {
+                                title: { display: true, text: '数量' },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 4. 空间位置分布 (散点图)
+            const centerXData = {{ split_stats.bbox_centers_x | tojson }};
+            const centerYData = {{ split_stats.bbox_centers_y | tojson }};
+            // 假设图像尺寸为 416x416 (来自您的示例 JSON)
+            const imgWidth = 416;
+            const imgHeight = 416;
+            if (centerXData && centerYData && centerXData.length > 0 && centerYData.length > 0) {
+                const ctxPosition = document.getElementById('chart-position-' + splitKey).getContext('2d');
+                new Chart(ctxPosition, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: '标注框中心点',
+                            data: centerXData.map((x, i) => ({x: x, y: imgHeight - centerYData[i]})), // 反转Y轴
+                            backgroundColor: 'rgba(255, 165, 0, 0.5)', // 橙色半透明
+                            borderColor: 'rgba(255, 165, 0, 1)',
+                            borderWidth: 1,
+                            pointRadius: 2,
+                            pointHoverRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: '{{ split_stats.name|title }} 集 - 标注框中心点分布',
+                                font: { size: 14 }
+                            },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                title: { display: true, text: 'X 坐标 (像素)' },
+                                min: 0, max: imgWidth,
+                                grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                            },
+                            y: {
+                                title: { display: true, text: 'Y 坐标 (像素)' },
+                                min: 0, max: imgHeight,
+                                reverse: true, // 反转Y轴
+                                grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 5. 宽高比分布
+            const aspectData = {{ split_stats.bbox_aspect_ratios | tojson }};
+            if (aspectData && aspectData.length > 0) {
+                const aspectHist = calculateHistogram(aspectData, 20);
+                const ctxAspect = document.getElementById('chart-aspect-' + splitKey).getContext('2d');
+                new Chart(ctxAspect, {
+                    type: 'bar',
+                    data: {
+                        labels: aspectHist.bins.map(b => b.toFixed(2)),
+                        datasets: [{
+                            label: '数量',
+                            data: aspectHist.counts,
+                            backgroundColor: getColor(4, 6),
+                            borderColor: getColor(4, 6).replace('0.7', '1'),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: '{{ split_stats.name|title }} 集 - 目标宽高比分布',
+                                font: { size: 14 }
+                            },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                title: { display: true, text: '宽高比 (W/H)' },
+                                ticks: { callback: formatLabel }
+                            },
+                            y: {
+                                title: { display: true, text: '数量' },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+        })(); // IIFE 结束
+        {% endif %}
+        {% endfor %}
+    </script>
+</body>
+</html>
+
+
+

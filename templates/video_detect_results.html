@@ -1,0 +1,310 @@
+<!-- templates/video_detect_results.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 安全性: 防止 MIME 类型嗅探 -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <!-- 缓存策略: 使用 Cache-Control 而非 Expires -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <title>✅ 视频检测结果</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #FFD700; /* 金色，蜜蜂相关 */
+            --primary-dark: #e6c200;
+            --secondary-color: #8B4513; /* 棕色 */
+            --accent-color: #FFA500; /* 橙色 */
+            --text-dark: #333;
+            --text-light: #666;
+            --text-muted: #868e96;
+            --bg-light: #f8f9fa;
+            --bg-card: #ffffff;
+            --border-color: #e0e0e0;
+            --danger-color: #dc3545;
+            --danger-bg: #f8d7da;
+            --danger-border: #f5c6cb;
+            --warning-color: #856404;
+            --warning-bg: #fff3cd;
+            --warning-border: #ffeaa7;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+            /* 兼容性: 支持 Safari 的用户选择 */
+            -webkit-user-select: auto;
+            user-select: auto;
+        }
+
+        .container {
+            /* 兼容性: 支持旧版 Edge 的宽度填充 */
+            width: -webkit-fill-available;
+            width: stretch;
+            max-width: 1200px; /* 适当增加最大宽度以适应视频 */
+            margin: 0 auto;
+            background-color: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        h1, h2 {
+            color: var(--secondary-color);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+        }
+
+        h1 i {
+            color: var(--accent-color);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 30px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h2 i {
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+
+        /* 操作链接 */
+        .action-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .action-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .action-link:hover {
+            background: linear-gradient(135deg, var(--primary-dark), #e69500);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Flash 消息 - 优化样式 */
+        .flash-messages {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .flash-messages ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .flash-messages li {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        /* 错误消息 */
+        .flash-messages.error {
+            color: var(--danger-color);
+            background-color: var(--danger-bg);
+            border: 1px solid var(--danger-border);
+        }
+
+        .flash-messages.error li::before {
+            font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f071"; /* fa-exclamation-triangle */
+        }
+
+        /* 警告消息 */
+        .flash-messages.warning {
+             color: var(--warning-color);
+             background-color: var(--warning-bg);
+             border: 1px solid var(--warning-border);
+        }
+
+        .flash-messages.warning li::before {
+            font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f071"; /* fa-exclamation-triangle */
+        }
+
+
+        /* 视频区域 */
+        .video-section {
+            margin-bottom: 40px;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 100%; /* 视频容器最大宽度为100% */
+            background-color: var(--bg-light);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+            outline: none; /* 移除默认焦点轮廓 */
+        }
+
+        .no-video {
+            padding: 50px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+            background-color: var(--bg-light);
+            border-radius: 10px;
+            box-shadow: inset var(--shadow);
+        }
+
+        .no-video i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+            color: #ced4da;
+        }
+
+        /* 注释文字 */
+        .note {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .note i {
+            margin-right: 5px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            h2 {
+                font-size: 1.3rem;
+            }
+            .action-links {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-clipboard-check"></i> 视频检测结果</h1>
+
+        <div class="action-links">
+            <a href="{{ url_for('detect_video') }}" class="action-link"><i class="fas fa-redo"></i> 重新检测</a>
+            <a href="{{ url_for('index') }}" class="action-link"><i class="fas fa-home"></i> 返回首页</a>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages error"> <!-- 假设 Flask flash 传递的是错误信息，可根据实际情况调整类名 -->
+                    <ul>
+                    {% for message in messages %}
+                        <li><i class="fas fa-exclamation-circle"></i> {{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="video-section">
+            <h2><i class="fas fa-film"></i> 原始视频</h2>
+            <div class="video-container">
+                {% if original_video %}
+                    <!-- 确保原始视频路径正确 -->
+                    <video controls>
+                        <source src="{{ url_for('uploaded_files', filename=original_video.split('/', 1)[1]) }}" type="video/mp4">
+                        您的浏览器不支持视频标签。
+                    </video>
+                {% else %}
+                    <div class="no-video">
+                        <i class="fas fa-file-video"></i>
+                        未找到原始视频。
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="video-section">
+            <h2><i class="fas fa-video"></i> 检测后视频</h2>
+            <div class="video-container">
+                {% if detected_video %}
+                    <!-- 确保检测视频路径正确 -->
+                    <video controls>
+                        <source src="{{ url_for('detection_files', filename=detected_video.split('/', 1)[1]) }}" type="video/mp4">
+                        您的浏览器不支持视频标签。
+                    </video>
+                    <p class="note"><i class="fas fa-info-circle"></i> 注：视频处理可能需要一些时间，如果视频未显示，请稍后刷新页面。</p>
+                {% else %}
+                    <div class="no-video">
+                        <i class="fas fa-ban"></i>
+                        未生成检测视频。可能未检测到目标、处理出错或仍在处理中。
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 可选：显示标签信息摘要 -->
+        <!--
+        <div class="labels-section">
+            <h2>检测信息摘要</h2>
+            {% if labels_dir %}
+                <p>标签文件目录: {{ labels_dir }}</p>
+                <p>（此处可以解析 labels_dir 下的 .txt 文件来显示更详细的检测信息）</p>
+            {% else %}
+                <p>未找到检测信息。</p>
+            {% endif %}
+        </div>
+        -->
+    </div>
+</body>
+</html>
+
+
+
