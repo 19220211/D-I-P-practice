@@ -1,0 +1,7 @@
+path: D:\Microsoft VS Code-workspace\bee_detection_app\dataset
+train: train/images
+val: valid/images
+test: test/images
+nc: 1
+names:
+- bees
